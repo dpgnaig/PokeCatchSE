@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="vi" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>PokeCatch Save Editor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+/* Linear-inspired theme trên nền Bootstrap */
+:root,[data-bs-theme=dark]{
+  --lin-bg:#08090a;--lin-panel:#0f1011;--lin-elev:#141516;--lin-hover:#1a1b1e;
+  --lin-bd:#23252a;--lin-bd2:#2e3036;--lin-fg:#f7f8f8;--lin-mut:#8a8f98;--lin-ac:#5e6ad2;--lin-ac2:#7c85e8;
+  --bs-body-bg:var(--lin-bg);--bs-body-color:var(--lin-fg);--bs-border-color:var(--lin-bd);
+  --bs-tertiary-bg:var(--lin-panel);--bs-secondary-color:var(--lin-mut);--bs-body-font-family:'Inter',system-ui,sans-serif;
+  --bs-primary:var(--lin-ac);--bs-warning:var(--lin-ac2);--bs-warning-rgb:124,133,232;--bs-link-color:var(--lin-ac2);
+}
+body{font-feature-settings:'cv11','ss01';font-size:13px;letter-spacing:-.005em;background:var(--lin-bg)}
+@supports (font-variation-settings:normal){:root{--bs-body-font-family:'InterVariable','Inter',system-ui,sans-serif}}
+.navbar{background:rgba(8,9,10,.85)!important;backdrop-filter:blur(10px);border-bottom:1px solid var(--lin-bd)!important}
+.navbar-brand{color:var(--lin-fg)!important;font-weight:600;font-size:14px}
+.navbar-brand .bi{color:var(--lin-ac2)}
+.text-warning{color:var(--lin-ac2)!important}
+.text-secondary{color:var(--lin-mut)!important}
+.card,.border.rounded{background:var(--lin-panel);border:1px solid var(--lin-bd)!important;border-radius:10px}
+.card-header{background:var(--lin-elev);border-bottom:1px solid var(--lin-bd);color:var(--lin-mut);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.nav-tabs{border-bottom:1px solid var(--lin-bd)}
+.nav-tabs .nav-link{border:0;border-bottom:2px solid transparent;color:var(--lin-mut);border-radius:0;padding:8px 14px;font-weight:500}
+.nav-tabs .nav-link:hover{color:var(--lin-fg)}
+.nav-tabs .nav-link.active{background:transparent;color:var(--lin-fg);border-bottom-color:var(--lin-ac)}
+.btn{border-radius:6px;font-weight:500;font-size:12.5px}
+.btn-warning{background:var(--lin-ac);border-color:var(--lin-ac);color:#fff}
+.btn-warning:hover{background:var(--lin-ac2);border-color:var(--lin-ac2);color:#fff}
+.btn-warning:disabled{background:var(--lin-elev);border-color:var(--lin-bd);color:var(--lin-mut)}
+.btn-outline-warning{color:var(--lin-ac2);border-color:var(--lin-bd2)}
+.btn-outline-warning:hover{background:var(--lin-ac);border-color:var(--lin-ac);color:#fff}
+.btn-outline-light{color:var(--lin-fg);border-color:var(--lin-bd2);background:var(--lin-elev)}
+.btn-outline-light:hover{background:var(--lin-hover);border-color:var(--lin-bd2);color:#fff}
+.btn-outline-danger{--bs-btn-color:#e5484d;--bs-btn-border-color:var(--lin-bd2)}
+.btn-outline-secondary{color:var(--lin-mut);border-color:var(--lin-bd2)}
+.form-control,.form-select,.input-group-text{background-color:var(--lin-elev);border-color:var(--lin-bd2);color:var(--lin-fg);border-radius:6px}
+.input-group-text{color:var(--lin-mut)}
+.form-control:focus,.form-select:focus{background-color:var(--lin-elev);color:var(--lin-fg);border-color:var(--lin-ac);box-shadow:0 0 0 3px rgba(94,106,210,.25)}
+.form-control::placeholder{color:#5c616b}
+.form-check-input{background-color:var(--lin-elev);border-color:var(--lin-bd2)}
+.form-check-input:checked{background-color:var(--lin-ac);border-color:var(--lin-ac)}
+.table{--bs-table-bg:transparent;--bs-table-hover-bg:var(--lin-hover);--bs-table-border-color:var(--lin-bd);color:var(--lin-fg)}
+.table>:not(caption)>*>*{border-bottom-color:var(--lin-bd)}
+.scroll thead th{background:var(--lin-panel);color:var(--lin-mut);font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--lin-bd2)}
+.badge.text-bg-warning{background:rgba(94,106,210,.2)!important;color:var(--lin-ac2)!important;border:1px solid rgba(94,106,210,.45)}
+.badge.text-bg-info{background:rgba(48,164,108,.15)!important;color:#46a758!important;border:1px solid rgba(48,164,108,.4)}
+.alert-secondary{background:var(--lin-panel);border:1px solid var(--lin-bd);color:var(--lin-mut)}
+code{color:var(--lin-ac2)}
+img.sp{width:40px;height:40px;image-rendering:pixelated}
+.scroll{max-height:72vh;overflow:auto;border-radius:8px}
+td,th{white-space:nowrap;vertical-align:middle}
+textarea.raw{height:65vh;font-family:'JetBrains Mono',Consolas,monospace;font-size:12px}
+.form-control-sm.w-n{width:95px}.w-dt{width:200px}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--lin-bd2);border-radius:6px}::-webkit-scrollbar-track{background:transparent}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes shimmer{0%{background-position:-120px 0}100%{background-position:120px 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.view-in{animation:fadeUp .25s ease both}
+tbody tr{animation:fadeUp .2s ease both}
+img.sp{border-radius:6px;background:linear-gradient(90deg,var(--lin-elev) 0,var(--lin-hover) 50%,var(--lin-elev) 100%) 0 0/240px 100%;animation:shimmer 1.2s linear infinite}
+img.sp.ld{animation:none;background:none}
+#busy{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(8,9,10,.7);backdrop-filter:blur(4px);color:var(--lin-mut)}
+#busy.on{display:flex}
+.ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--lin-bd2);border-top-color:var(--lin-ac2);animation:spin .7s linear infinite}
+.progress-line{position:fixed;top:0;left:0;height:2px;width:0;background:var(--lin-ac2);z-index:3000;transition:width .3s ease,opacity .3s}
+.btn .spinner-border{--bs-spinner-width:.9rem;--bs-spinner-height:.9rem;--bs-spinner-border-width:.15em}
+/* ===== Responsive / mobile ===== */
+#tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#tabs::-webkit-scrollbar{display:none}
+#tabs .nav-link{white-space:nowrap}
+@media (max-width:768px){
+  body{font-size:14px}
+  .container-fluid{padding-left:10px;padding-right:10px}
+  .navbar .container-fluid{gap:6px!important}
+  .navbar-brand{font-size:13px;margin-right:0}
+  #info{display:none}
+  #toast{width:100%;order:9;margin:0!important}
+  .navbar .btn{padding:.35rem .6rem}
+  .scroll{max-height:none;overflow:visible}
+  #main .d-flex.flex-wrap>*,#main .d-flex.flex-wrap .form-control,#main .d-flex.flex-wrap .form-select{flex:1 1 140px;width:auto!important;max-width:none!important}
+  #main .input-group[style]{max-width:100%!important}
+  #main .btn-group{margin-left:0!important;width:100%}
+  #main .btn-group>.btn{flex:1}
+  .card-body{padding:.75rem}
+  textarea.raw{height:55vh}
+  /* bảng -> thẻ */
+  table.rtable,table.rtable tbody{display:block;width:100%}
+  table.rtable thead{display:none}
+  table.rtable tr{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;position:relative;padding:12px 10px;margin:0 0 10px;border:1px solid var(--lin-bd);border-radius:10px;background:var(--lin-elev)}
+  table.rtable td{display:flex;flex-direction:column;gap:3px;border:0!important;padding:0!important;min-width:0;white-space:normal;background:transparent!important;box-shadow:none!important}
+  table.rtable td[data-label]:not([data-label=""])::before{content:attr(data-label);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--lin-mut)}
+  table.rtable td:first-child{position:absolute;right:10px;top:10px}
+  table.rtable td:first-child img.sp{width:48px;height:48px}
+  table.rtable td:nth-child(2){grid-column:1/-1;padding-right:56px!important}
+  table.rtable td:has(.w-dt),table.rtable td:has([data-c="5"]),table.rtable td:has([data-f="where"]),table.rtable td:last-child:has(.btn){grid-column:1/-1}
+  table.rtable td .form-control,table.rtable td .form-select,table.rtable td .w-dt{width:100%!important}
+  table.rtable td .form-check-input{width:1.4rem;height:1.4rem}
+  table.rtable td:last-child .btn{width:100%}
+  /* tab Đội hình: 3 ô không có header */
+  table.rtable:not(:has(thead)) tr{grid-template-columns:28px 1fr}
+  table.rtable:not(:has(thead)) td:first-child{position:static}
+  table.rtable:not(:has(thead)) td:nth-child(2){grid-column:auto;padding-right:0!important}
+  table.rtable:not(:has(thead)) td:nth-child(3){grid-column:1/-1}
+  .card .rtable{padding:10px}
+}
+/* ===== Virtual list ===== */
+.vl-wrap{position:relative;max-height:72vh;overflow:auto;border:1px solid var(--lin-bd);border-radius:8px;background:var(--lin-panel)}
+.vl-head{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:var(--cols);gap:0 8px;padding:8px;background:var(--lin-panel);border-bottom:1px solid var(--lin-bd2);color:var(--lin-mut);font-size:11.5px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.vl-body{position:relative}
+.vrow{position:absolute;left:0;right:0;height:var(--dh);display:grid;grid-template-columns:var(--cols);align-items:center;gap:0 8px;padding:0 8px;border-bottom:1px solid var(--lin-bd);white-space:nowrap}
+.vrow:hover{background:var(--lin-hover)}
+.vrow .cell{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.vrow .lbl{display:none}
+.vrow .form-control,.vrow .form-select{width:100%}
+.vrow .uid{font-size:11px}
+.vrow img.sp{width:40px;height:40px}
+@media (max-width:768px){
+  .vl-wrap{max-height:none;overflow:visible;border:0;background:transparent}
+  .vl-head{display:none}
+  .vl-body{width:auto!important}
+  .vrow{left:0;right:0;height:var(--ch);display:grid;grid-template-columns:repeat(var(--mc),minmax(0,1fr));gap:8px;align-content:start;padding:12px;
+    border:1px solid var(--lin-bd);border-radius:12px;background:var(--lin-elev);box-shadow:0 1px 0 rgba(255,255,255,.03) inset;white-space:normal;overflow:hidden}
+  .vrow:hover{background:var(--lin-elev)}
+  .vrow .lbl{display:block;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--lin-mut);margin-bottom:2px}
+  .vrow .cell{justify-content:flex-start}
+  .vrow .s-all{grid-column:1/-1}
+  .vrow .s2{grid-column:span 2}
+  .vrow .c-img{position:absolute;right:12px;top:10px}
+  .vrow .c-img img.sp{width:52px;height:52px}
+  .vrow .c-name{padding-right:60px;min-height:44px}
+  .vrow .form-control,.vrow .form-select{font-size:14px;min-height:36px}
+  .vrow .form-check-input{width:1.6rem;height:1.6rem;margin-top:2px}
+  .vrow .btn{width:100%;min-height:36px}
+}
+/* ===== Đội hình ===== */
+.tgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.tslot{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 10px;border:1px solid var(--lin-bd);border-radius:10px;background:var(--lin-elev);text-align:center;min-width:0}
+.tslot.empty{border-style:dashed;opacity:.8}
+.tslot .tno{position:absolute;left:8px;top:6px;font-size:11px;color:var(--lin-mut)}
+.tslot .tsp{width:64px;height:64px;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--lin-mut)}
+.tslot .tsp img.sp{width:64px;height:64px}
+.tslot .tname{font-size:13px;min-height:20px;line-height:1.25}
+.tslot input{font-size:11px;text-align:center}
+@media (max-width:992px){.tgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:576px){
+  .tgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .tslot{padding:14px 8px 10px}
+  .tslot .tsp,.tslot .tsp img.sp{width:72px;height:72px}
+  .tslot input{font-size:12px;min-height:36px}
+  .card-body:has(.tgrid){padding:.6rem}
+}
+/* ===== Bottom navigation (mobile) ===== */
+#tabs .nav-link i{display:none}
+@media (max-width:768px){
+  main#main{padding-bottom:84px}
+  #tabs{position:fixed;left:0;right:0;bottom:0;z-index:1500;margin:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+    display:flex;flex-wrap:nowrap;overflow:visible;justify-content:space-between;gap:2px;
+    background:rgba(15,16,17,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--lin-bd);border-bottom:0}
+  #tabs .nav-item{flex:1 1 0;min-width:0}
+  #tabs .nav-link{width:100%;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border:0;border-radius:8px;font-size:10px;line-height:1.1;color:var(--lin-mut)}
+  #tabs .nav-link i{display:block;font-size:19px;line-height:1}
+  #tabs .nav-link span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #tabs .nav-link.active{background:rgba(94,106,210,.18);color:var(--lin-ac2);border:0}
+  #toast{position:fixed;left:12px;right:12px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:1600;width:auto;order:0;text-align:center;background:var(--lin-elev);border:1px solid var(--lin-bd2);border-radius:8px;padding:6px 10px}
+  #toast:empty{display:none}
+}
+.modal-content{background:var(--lin-panel);border:1px solid var(--lin-bd2);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-header,.modal-footer{border-color:var(--lin-bd)}
+.modal-backdrop.show{--bs-backdrop-opacity:.65;backdrop-filter:blur(3px)}
+.modal .form-label{font-size:12px;color:var(--lin-mut);margin-bottom:4px}
+@media (max-width:768px){.modal-fullscreen-sm-down .modal-content{border-radius:0}.modal .form-control,.modal .form-select{min-height:40px;font-size:16px}}
+body.modal-open #tabs,body.modal-open #toast{display:none!important}
+.sticky-bar{position:sticky;top:var(--nav-h,49px);z-index:30;background:var(--lin-panel);padding:8px 0;margin-bottom:8px;border-bottom:1px solid var(--lin-bd);box-shadow:0 8px 12px -10px rgba(0,0,0,.8)}
+/* ===== App bar ===== */
+.appbar{flex-wrap:nowrap}
+.brandbox{display:flex;align-items:center;gap:12px;min-width:0}
+.brandbox #info{display:inline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:768px){
+  .navbar{padding:0;padding-top:env(safe-area-inset-top)}
+  .appbar{min-height:56px;padding:6px 12px;gap:8px!important}
+  .brandbox{flex-direction:column;align-items:flex-start;gap:0;flex:1 1 auto;line-height:1.15}
+  .brandbox .navbar-brand{font-size:15px;padding:0;margin:0}
+  .brandbox #info{display:block!important;max-width:100%;font-size:11px!important}
+  .abtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0!important;border-radius:10px;font-size:18px}
+  .abtn .btn-txt{display:none}
+  #dl:not(:disabled){box-shadow:0 0 0 3px rgba(94,106,210,.25)}
+  #nameLoad{order:5}
+}
+/* ===== Tab Chung: cây chỉ số ===== */
+.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.gleaf{display:flex;flex-direction:column;gap:3px;min-width:0;margin:0}
+.gk{font-size:11.5px;color:var(--lin-mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.gnode{grid-column:1/-1;border:1px solid var(--lin-bd);border-radius:8px;background:rgba(255,255,255,.015)}
+details.gnode.gtop{border:0;background:transparent}
+details.gnode>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;cursor:pointer;list-style:none;font-weight:500}
+details.gnode>summary::-webkit-details-marker{display:none}
+details.gnode>summary::before{content:'\F285';font-family:'bootstrap-icons';font-size:11px;color:var(--lin-mut);margin-right:8px;transition:transform .15s}
+details.gnode[open]>summary::before{transform:rotate(90deg)}
+details.gnode>summary>span:first-of-type{flex:1}
+details.gnode>.gbody{padding:4px 12px 12px}
+@media (max-width:768px){.gl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.gl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="busy"><div class="ring"></div><div id="busyText">Đang xử lý…</div></div><div id="pline" class="progress-line"></div>
+<nav class="navbar bg-body-tertiary border-bottom sticky-top">
+  <div class="container-fluid gap-2 appbar">
+    <div class="brandbox">
+      <span class="navbar-brand fw-bold mb-0"><i class="bi bi-lightning-charge-fill"></i> PokeCatch<span class="d-none d-md-inline"> Save Editor</span></span>
+      <span id="info" class="text-secondary small">Chưa mở file</span>
+    </div>
+    <span id="nameLoad" class="text-secondary small d-none"><span class="spinner-border spinner-border-sm"></span><span class="d-none d-md-inline"> Đang tải tên Pokémon…</span></span>
+    <span id="toast" class="ms-auto text-warning small"></span>
+    <label class="btn btn-outline-light btn-sm mb-0 abtn" title="Mở file JSON"><i class="bi bi-folder2-open"></i><span class="btn-txt"> Mở file JSON</span>
+      <input id="file" type="file" accept=".json,application/json" hidden></label>
+    <button id="dl" class="btn btn-warning btn-sm abtn" title="Tải file đã sửa" disabled><i class="bi bi-download"></i><span class="btn-txt"> Tải file đã sửa</span></button>
+  </div>
+</nav>
+<div class="container-fluid py-2">
+  <ul class="nav nav-tabs" id="tabs"></ul>
+  <main id="main" class="pt-3">
+    <div class="alert alert-secondary">Hãy mở file save <code>pokecatch-*.json</code>. Mọi thứ xử lý trong trình duyệt, không upload đi đâu. Nên sao lưu file gốc trước khi dùng file đã sửa.</div>
+  </main>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header"><h6 class="modal-title"><i class="bi bi-plus-circle"></i> Thêm Pokémon mới</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div>
+      <div class="modal-body" id="addBody"></div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" id="n_add" class="btn btn-warning btn-sm"><i class="bi bi-check-lg"></i> Thêm</button></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let data=null, fileName='save.json', tab='general';
+const $=s=>document.querySelector(s);
+const TABS=[['general','Chung','bi-sliders'],['items','Vật phẩm','bi-bag'],['mons','Pokémon','bi-collection'],['team','Đội hình','bi-people'],['dex','Pokédex','bi-journal-text'],['pension','Pension','bi-egg'],['raw','JSON','bi-braces']];
+const sprite=id=>`https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;
+const sv=()=>data.save;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=(v,d=0)=>{const n=Number(v);return Number.isFinite(n)?n:d};
+const toast=t=>{const m=$('#toast');m.textContent=t;clearTimeout(toast.t);toast.t=setTimeout(()=>m.textContent='',3000)};
+const nextFrame=()=>new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));
+async function busy(text,fn){
+  $('#busyText').textContent=text; $('#busy').classList.add('on'); const l=$('#pline'); l.style.opacity=1; l.style.width='60%';
+  await nextFrame();
+  try{return await fn()}finally{l.style.width='100%';setTimeout(()=>{l.style.opacity=0;l.style.width='0'},300);$('#busy').classList.remove('on')}
+}
+const imgTag=id=>`<img class="sp" loading="lazy" src="${sprite(id)}" onload="this.classList.add('ld')" onerror="this.classList.add('ld');this.style.visibility='hidden'">`;
+
+/* ---- tên Pokémon (PokeAPI, cache localStorage) ---- */
+let NAMES={};
+try{NAMES=JSON.parse(localStorage.getItem('pc_names')||'{}')}catch(e){}
+async function loadNames(){
+  if(Object.keys(NAMES).length>500) return;
+  $('#nameLoad').classList.remove('d-none');
+  try{
+    const r=await fetch('https://pokeapi.co/api/v2/pokemon-species?limit=2000');
+    const j=await r.json(); const o={};
+    j.results.forEach(x=>{const id=+x.url.split('/').filter(Boolean).pop();
+      o[id]=x.name.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ')});
+    NAMES=o; localStorage.setItem('pc_names',JSON.stringify(o));
+    if(data) render();
+  }catch(e){toast('Không tải được tên Pokémon (offline?)')}
+  finally{$('#nameLoad').classList.add('d-none')}
+}
+const pname=id=>NAMES[id]||(id>10000?`Form #${id}`:`#${id}`);
+
+/* ---- thời gian ---- */
+const pad=n=>String(n).padStart(2,'0');
+function toLocalInput(ms){
+  if(ms==null||!Number.isFinite(ms)) return '';
+  const d=new Date(ms);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+const fromLocalInput=v=>v?new Date(v).getTime():null;
+const dtInput=(ms,attrs)=>`<input type="datetime-local" step="1" class="form-control form-control-sm w-dt" value="${toLocalInput(ms)}" ${attrs}>`;
+const b36ms=u=>{let n=0;for(const c of u.slice(0,8))n=n*36+parseInt(c,36);return n};
+const msb36=ms=>ms.toString(36).padStart(8,'0');
+
+/* đổi uid ở mọi nơi trong save (giá trị và key) */
+function renameUid(root,from,to){
+  const walk=o=>{
+    if(Array.isArray(o)){for(let i=0;i<o.length;i++){if(o[i]===from)o[i]=to;else if(o[i]&&typeof o[i]==='object')walk(o[i])}}
+    else if(o&&typeof o==='object'){
+      for(const k of Object.keys(o)){
+        const v=o[k];
+        if(v===from)o[k]=to;else if(v&&typeof v==='object')walk(v);
+        if(k===from){o[to]=o[k];delete o[k]}
+      }
+    }
+  };
+  walk(root);
+}
+
+/* ---- file ---- */
+$('#file').onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{ await busy('Đang đọc file…',async()=>{
+    const j=JSON.parse(await f.text());
+    if(!j.save||typeof j.save!=='object') throw new Error('Không thấy trường "save"');
+    data=j; fileName=f.name; $('#dl').disabled=false;
+    $('#info').textContent=`${sv().trainer?.name||""} · v${j.version} · ${f.name}`;
+    render(); toast('Đã tải');
+  })}catch(err){alert('File không hợp lệ: '+err.message)}
+};
+$('#dl').onclick=async()=>{ const b0=$('#dl'), h=b0.innerHTML; b0.disabled=true; b0.innerHTML='<span class="spinner-border spinner-border-sm"></span><span class="btn-txt"> Đang tạo…</span>'; await nextFrame();
+  sv().updatedAt=Date.now(); data.at=Date.now();
+  const b=new Blob([JSON.stringify(data)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+  a.download=fileName.replace(/\.json$/i,'')+'-edited.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  setTimeout(()=>{b0.innerHTML=h;b0.disabled=false},500);
+};
+
+function renderTabs(){
+  $('#tabs').innerHTML=TABS.map(([k,n,ic])=>`<li class="nav-item"><button class="nav-link ${k===tab?'active':''}" data-k="${k}"><i class="bi ${ic}"></i><span>${n}</span></button></li>`).join('');
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.k;render()});
+}
+function render(){ renderTabs(); if(!data) return; if(VL){VL.destroy();VL=null} ({general,items,mons,team,dex,pension,raw})[tab]();
+  const m=$('#main'); m.classList.remove('view-in'); void m.offsetWidth; m.classList.add('view-in'); }
+
+/* ---------- Chung ---------- */
+// Hiển thị mọi trường của save (trừ các phần đã có tab riêng) dưới dạng cây có thể sửa.
+const GEN_SKIP=new Set(['dex','mz','items','pension','team','eventTeams','road','teamSets','money']);
+const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
+const isTs=v=>typeof v==='number'&&v>1.5e12&&v<2.5e12;
+const getP=(p)=>p.reduce((o,k)=>o?.[k],sv());
+function setP(p,val){const par=getP(p.slice(0,-1)); if(par) par[p[p.length-1]]=val}
+const pAttr=p=>esc(JSON.stringify(p));
+function leafHtml(p,v){
+  const k=p[p.length-1], a=`data-p="${pAttr(p)}"`;
+  let inp;
+  if(typeof v==='boolean') inp=`<div class="form-check form-switch"><input type="checkbox" role="switch" class="form-check-input" ${a} data-t="bool" ${v?'checked':''}></div>`;
+  else if(isTs(v)) inp=`<input type="datetime-local" step="1" class="form-control form-control-sm" ${a} data-t="ts" value="${toLocalInput(v)}">`;
+  else if(typeof v==='number') inp=`<input type="number" class="form-control form-control-sm" ${a} data-t="num" value="${v}">`;
+  else inp=`<input class="form-control form-control-sm" ${a} data-t="${v===null?'null':'str'}" value="${esc(v??'')}" placeholder="${v===null?'null':''}">`;
+  return `<label class="gleaf"><span class="gk" title="${esc(p.join('.'))}">${esc(k)}</span>${inp}</label>`;
+}
+function arrScalar(v){return v.length<=32&&v.every(x=>x===null||['number','string','boolean'].includes(typeof x))}
+function nodeHtml(p,v){
+  const k=p[p.length-1];
+  if(v===null||typeof v!=='object') return leafHtml(p,v);
+  if(Array.isArray(v)&&arrScalar(v))
+    return `<label class="gleaf"><span class="gk" title="${esc(p.join('.'))}">${esc(k)} <span class="text-secondary">[${v.length}]</span></span>
+      <input class="form-control form-control-sm" data-p="${pAttr(p)}" data-t="arr" value="${esc(v.join(', '))}" placeholder="a, b, c"></label>`;
+  const n=Array.isArray(v)?v.length:Object.keys(v).length;
+  return `<details class="gnode" data-p="${pAttr(p)}"><summary><span>${esc(k)}</span><span class="badge text-bg-secondary">${n}</span></summary><div class="gl gbody"></div></details>`;
+}
+function bodyHtml(p){
+  const v=getP(p), keys=Array.isArray(v)?v.map((_,i)=>i):Object.keys(v), CAP=150;
+  let h=keys.slice(0,CAP).map(k=>nodeHtml([...p,k],v[k])).join('');
+  if(keys.length>CAP) h+=`<div class="text-secondary small" style="grid-column:1/-1">Còn ${keys.length-CAP} mục nữa, hãy dùng tab JSON thô.</div>`;
+  return h||'<div class="text-secondary small" style="grid-column:1/-1">Trống</div>';
+}
+function general(){
+  const s=sv(), t=s.trainer||(s.trainer={});
+  const top=Object.keys(s).filter(k=>!GEN_SKIP.has(k));
+  const scalars=top.filter(k=>s[k]===null||typeof s[k]!=='object'||(Array.isArray(s[k])&&arrScalar(s[k])&&s[k].length));
+  const groups=top.filter(k=>!scalars.includes(k));
+  $('#main').innerHTML=`
+    <div class="card mb-3"><div class="card-header">Chỉnh nhanh</div><div class="card-body">
+      <div class="row g-3">
+        <div class="col-12 col-md-4"><label class="form-label">Tên trainer</label><input id="g_name" class="form-control" value="${esc(t.name||'')}"></div>
+        <div class="col-12 col-md-4"><label class="form-label">Tiền</label><div class="input-group">
+          <input id="g_money" type="number" class="form-control" value="${s.money}"><button class="btn btn-outline-warning" data-v="999999999">Max</button></div></div>
+        <div class="col-12 col-md-4"><label class="form-label">Coin (casino)</label><div class="input-group">
+          <input id="g_coin" type="number" class="form-control" value="${s.items?.coin??0}"><button class="btn btn-outline-warning" data-c="999999">Max</button></div></div>
+      </div></div></div>
+    <div class="sticky-bar"><div class="input-group input-group-sm"><span class="input-group-text"><i class="bi bi-search"></i></span>
+      <input id="g_q" class="form-control" placeholder="Tìm mọi chỉ số theo tên/đường dẫn, vd: caught, casino, stats.earned" autocomplete="off"></div></div>
+    <div id="g_res" class="gl mb-3 d-none"></div>
+    <div id="g_tree">
+      <div class="card mb-3"><div class="card-header">Thông số chung (${scalars.length})</div><div class="card-body"><div class="gl">${scalars.map(k=>nodeHtml([k],s[k])).join('')}</div></div></div>
+      ${groups.map(k=>{const v=s[k],n=Array.isArray(v)?v.length:Object.keys(v).length;
+        return `<div class="card mb-2"><details class="gnode gtop" data-p="${pAttr([k])}"><summary><span>${esc(k)}</span><span class="badge text-bg-secondary">${n}</span></summary><div class="gl gbody p-3"></div></details></div>`}).join('')}
+    </div>`;
+  $('#g_name').oninput=e=>{t.name=e.target.value};
+  $('#g_money').oninput=e=>{s.money=num(e.target.value)};
+  $('#g_coin').oninput=e=>{(s.items=s.items||{}).coin=num(e.target.value)};
+  document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{s.money=+b.dataset.v;$('#g_money').value=s.money});
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{(s.items=s.items||{}).coin=+b.dataset.c;$('#g_coin').value=s.items.coin});
+
+  // tìm kiếm
+  let tm; $('#g_q').oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{
+    const q=e.target.value.trim().toLowerCase(), res=$('#g_res'), tree=$('#g_tree');
+    if(!q){res.classList.add('d-none');tree.classList.remove('d-none');return}
+    const out=[]; const walk=(p,v)=>{
+      if(out.length>=200) return;
+      if(v===null||typeof v!=='object'||(Array.isArray(v)&&arrScalar(v)&&v.length)){ if(p.join('.').toLowerCase().includes(q)) out.push(p); return }
+      for(const k of Array.isArray(v)?v.map((_,i)=>i):Object.keys(v)) walk([...p,k],v[k]);
+    };
+    top.forEach(k=>walk([k],s[k]));
+    res.innerHTML=out.map(p=>{const v=getP(p);return leafHtml(p,v).replace(/<span class="gk" title="([^"]*)">[^<]*/,'<span class="gk" title="$1">$1')}).join('')||'<div class="text-secondary">Không có kết quả</div>';
+    res.classList.remove('d-none'); tree.classList.add('d-none');
+  },200)};
+}
+
+/* ---------- Vật phẩm ---------- */
+function items(){
+  const it=sv().items||(sv().items={});
+  const keys=Object.keys(it).sort();
+  $('#main').innerHTML=`<div class="card"><div class="card-body">
+    <div class="d-flex gap-2 flex-wrap mb-3">
+      <button id="i_all" class="btn btn-sm btn-outline-light">Tất cả = 999</button>
+      <button id="i_zero" class="btn btn-sm btn-outline-light">Tất cả = 0</button>
+      <div class="input-group input-group-sm" style="max-width:380px"><input id="i_new" class="form-control" placeholder="key mới, vd: rare-candy"><button id="i_add" class="btn btn-outline-warning">Thêm</button></div>
+    </div>
+    <div class="row g-2">${keys.map(k=>`<div class="col-12 col-md-6 col-xl-3"><div class="input-group input-group-sm">
+      <span class="input-group-text flex-grow-1 justify-content-start">${esc(k)}</span>
+      <input type="number" min="0" class="form-control" style="max-width:110px" data-k="${esc(k)}" value="${it[k]}"></div></div>`).join('')}</div>
+  </div></div>`;
+  $('#main').querySelectorAll('input[data-k]').forEach(i=>i.oninput=()=>{it[i.dataset.k]=num(i.value)});
+  $('#i_all').onclick=()=>{keys.forEach(k=>{if(k!=='coin')it[k]=999});items()};
+  $('#i_zero').onclick=()=>{keys.forEach(k=>{if(k!=='coin')it[k]=0});items()};
+  $('#i_add').onclick=()=>{const k=$('#i_new').value.trim();if(k){it[k]=it[k]||1;items()}};
+}
+
+/* ---------- Virtual list (cuộn ảo) ---------- */
+// Desktop: cuộn trong khung .vl-wrap (header sticky). Mobile (<=768px): cuộn theo cả trang, mỗi dòng là một thẻ.
+let VL=null;
+const MQ=window.matchMedia('(max-width:768px)');
+function makeVL(o){
+  if(VL) VL.destroy();
+  const wrap=o.wrap, body=wrap.querySelector('.vl-body'), BUF=4; let cs=-1, ce=-1;
+  const H=()=>MQ.matches?o.mH:o.dH;
+  function update(force){
+    const n=o.items.length, h=H();
+    body.style.height=n*h+'px';
+    let top,vh;
+    if(MQ.matches){top=-body.getBoundingClientRect().top;vh=innerHeight}
+    else{top=wrap.scrollTop-body.offsetTop;vh=wrap.clientHeight}
+    const s=Math.max(0,Math.floor(Math.max(0,top)/h)-BUF), e=Math.min(n,Math.ceil((top+vh)/h)+BUF);
+    if(!force&&s===cs&&e===ce) return;
+    cs=s;ce=e;
+    let out='';
+    for(let i=s;i<e;i++) out+=`<div class="vrow" data-i="${i}" style="top:${i*h}px">${o.row(o.items[i],i)}</div>`;
+    body.innerHTML=out;
+  }
+  const onScroll=()=>update(false), onResize=()=>update(true);
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onResize);
+  wrap.addEventListener('scroll',onScroll,{passive:true});
+  const rowOf=e=>{const r=e.target.closest('.vrow');return r?[o.items[+r.dataset.i],+r.dataset.i]:[]};
+  body.addEventListener('change',e=>{const[it,i]=rowOf(e);if(it)o.onChange(e,it,i)});
+  body.addEventListener('click',e=>{const[it,i]=rowOf(e);if(it&&o.onClick)o.onClick(e,it,i)});
+  VL={update,destroy(){
+    window.removeEventListener('scroll',onScroll);window.removeEventListener('resize',onResize);wrap.removeEventListener('scroll',onScroll)}};
+  update(true);
+  return VL;
+}
+const cell=(cls,label,inner)=>`<div class="cell ${cls}"><span class="lbl">${label}</span>${inner}</div>`;
+const vlShell=(cols,heads,dH,ch,mc)=>{
+  const w=cols.reduce((a,b)=>a+b,0)+8*(cols.length-1)+16;
+  return `<div class="vl-wrap" style="--cols:${cols.map(c=>c+'px').join(' ')};--dh:${dH}px;--ch:${ch}px;--mc:${mc}">
+    <div class="vl-head" style="width:${w}px">${heads.map(h=>`<div>${h}</div>`).join('')}</div>
+    <div class="vl-body" style="width:${w}px"></div></div>`;
+};
+
+/* ---------- Pokémon (mz.m) ---------- */
+// m[i] = [uid, species, level, xp, regionIdx(mz.r), whereIdx(mz.w), c6, extras?]
+// extras: {shiny,hp,wins,tries,how,egg,ot,orig,pity,status}
+// Ngày bắt = timestamp (ms, base36) trong 8 ký tự đầu của uid. Đổi ngày sẽ đổi uid ở mọi nơi tham chiếu.
+let monFilter='';
+function mons(){
+  const mz=sv().mz; if(!mz||!mz.m){$('#main').innerHTML='<div class="alert alert-warning">Không có mz.m</div>';return}
+  mz.r=mz.r||[]; mz.w=mz.w||[];
+  const q=monFilter.trim().toLowerCase();
+  const teamHas=u=>(sv().team||[]).includes(u);
+  const list=mz.m.filter(m=>!q||String(m[1])===q||m[0].includes(q)||pname(m[1]).toLowerCase().includes(q)||
+    (q==='team'&&teamHas(m[0]))||(q==='shiny'&&m[7]?.shiny)||(q==='egg'&&m[7]?.egg));
+  const opt=(arr,v)=>arr.map((n,i)=>`<option value="${i}" ${i===v?'selected':''}>${esc(n)}</option>`).join('');
+  const cols=[48,190,200,90,80,100,100,200,60,90,80,80,90,80,44];
+  const heads=['','Pokémon','Ngày bắt','Species','Level','XP','Vùng','Nơi bắt','Shiny','Cách có','Tries','HP','Wins','c6',''];
+  $('#main').innerHTML=`<div class="card"><div class="card-body">
+    <div class="d-flex gap-2 align-items-center flex-wrap sticky-bar">
+      <input id="m_q" class="form-control form-control-sm" style="width:300px" placeholder="Lọc: tên, species id, uid, team, shiny, egg" value="${esc(monFilter)}">
+      <span class="text-secondary"><span id="m_cnt">${list.length}</span>/<span id="m_tot">${mz.m.length}</span> con</span>
+      <button id="m_new" class="btn btn-sm btn-warning"><i class="bi bi-plus-lg"></i> Thêm Pokémon</button>
+      <button id="m_lv" class="btn btn-sm btn-outline-warning">Lv 100 cho các con đang lọc</button>
+    </div>
+    <div class="text-secondary small mb-2">Đổi "Ngày bắt" sẽ đổi uid của con đó (và mọi chỗ tham chiếu uid trong save). Cột c6 chưa rõ ý nghĩa.</div>
+    ${vlShell(cols,heads,60,420,3)}
+  </div></div>`;
+  const num_=(c,v,w)=>`<input type="number" class="form-control form-control-sm" data-c="${c}" value="${v}">`;
+  const xin=(k,v)=>`<input type="number" class="form-control form-control-sm" data-x="${k}" value="${v??''}">`;
+  const rowHtml=m=>{const x=m[7]||{};return [
+    cell('c-img','',imgTag(m[1])),
+    cell('c-name s-all','',`<div><b>${esc(pname(m[1]))}</b> ${teamHas(m[0])?'<span class="badge text-bg-warning">TEAM</span>':''}${x.egg?' <span class="badge text-bg-info">EGG</span>':''}${x.shiny?' <i class="bi bi-stars text-warning"></i>':''}</div><small class="text-secondary uid">${m[0]}</small>`),
+    cell('s-all','Ngày bắt',dtInput(b36ms(m[0]),'data-t="caught"')),
+    cell('','Species',num_(1,m[1])),
+    cell('','Level',num_(2,m[2])),
+    cell('','XP',num_(3,m[3])),
+    cell('','Vùng',`<select class="form-select form-select-sm" data-c="4">${opt(mz.r,m[4])}</select>`),
+    cell('s2','Nơi bắt',`<select class="form-select form-select-sm" data-c="5">${opt(mz.w,m[5])}</select>`),
+    cell('','Shiny',`<input type="checkbox" class="form-check-input" data-b="shiny" ${x.shiny?'checked':''}>`),
+    cell('','Cách có',`<input class="form-control form-control-sm" data-s="how" value="${esc(x.how??'')}" placeholder="gift/npc">`),
+    cell('','Tries',xin('tries',x.tries)),
+    cell('','HP',xin('hp',x.hp)),
+    cell('','Wins',xin('wins',x.wins)),
+    cell('','c6',num_(6,m[6]??0)),
+    cell('s-all','',`<button class="btn btn-sm btn-outline-danger" data-del><i class="bi bi-trash"></i><span class="d-md-none"> Xóa</span></button>`)
+  ].join('')};
+  const setX=(m,k,v)=>{
+    if(v===''||v===false||v==null){if(m[7]){delete m[7][k];if(!Object.keys(m[7]).length)m.length=7}}
+    else{m[7]=m[7]||{};m[7][k]=v}};
+  const vl=makeVL({wrap:$('.vl-wrap'),items:list,dH:60,mH:432,row:rowHtml,
+    onChange:(e,m)=>{
+      const i=e.target;
+      if(i.dataset.c){m[+i.dataset.c]=num(i.value); if(i.dataset.c==='1')vl.update(true)}
+      else if(i.dataset.x) setX(m,i.dataset.x,i.value===''?'':num(i.value));
+      else if(i.dataset.s) setX(m,i.dataset.s,i.value.trim());
+      else if(i.dataset.b){setX(m,i.dataset.b,i.checked||false);vl.update(true)}
+      else if(i.dataset.t==='caught'){
+        const ms=fromLocalInput(i.value); if(ms==null||ms<0){vl.update(true);return}
+        const used=new Set(mz.m.map(z=>z[0]));
+        let to=msb36(ms)+m[0].slice(8);
+        for(let n=0;used.has(to)&&to!==m[0];n++) to=msb36(ms+n+1)+m[0].slice(8);
+        if(to===m[0]) return;
+        renameUid(data.save,m[0],to); toast(`uid → ${to}`); vl.update(true);
+      }},
+    onClick:(e,m)=>{
+      if(!e.target.closest('[data-del]')) return;
+      if(!confirm('Xóa con này khỏi mz.m? (có thể làm lệch dữ liệu liên quan)')) return;
+      mz.m.splice(mz.m.indexOf(m),1); list.splice(list.indexOf(m),1);
+      $('#m_cnt').textContent=list.length; $('#m_tot').textContent=mz.m.length; vl.update(true)}
+  });
+  const modalEl=$('#addModal'), modal=bootstrap.Modal.getOrCreateInstance(modalEl);
+  $('#m_new').onclick=()=>{
+    $('#addBody').innerHTML=`
+      <div class="row g-3">
+        <div class="col-12 col-sm-6"><label class="form-label">Pokémon (tên hoặc species id)</label>
+          <input id="n_sp" class="form-control" placeholder="vd: Pikachu hoặc 25" list="n_list" autocomplete="off">
+          <datalist id="n_list">${Object.entries(NAMES).map(([i,n])=>`<option value="${esc(n)}">`).join('')}</datalist></div>
+        <div class="col-6 col-sm-3"><label class="form-label">Level</label><input id="n_lv" type="number" min="1" max="100" value="100" class="form-control"></div>
+        <div class="col-6 col-sm-3"><label class="form-label">Số lượng</label><input id="n_cnt" type="number" min="1" max="500" value="1" class="form-control"></div>
+        <div class="col-12 col-sm-4"><label class="form-label">Vùng</label><select id="n_reg" class="form-select">${mz.r.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('')}</select></div>
+        <div class="col-12 col-sm-8"><label class="form-label">Nơi bắt</label><select id="n_w" class="form-select">${mz.w.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('')}</select></div>
+        <div class="col-12 col-sm-8"><label class="form-label">Ngày bắt</label><input id="n_dt" type="datetime-local" step="1" class="form-control" value="${toLocalInput(Date.now())}"></div>
+        <div class="col-12 col-sm-4 d-flex align-items-end"><div class="form-check form-switch mb-2"><input id="n_sh" type="checkbox" class="form-check-input" role="switch"><label class="form-check-label" for="n_sh">Shiny</label></div></div>
+      </div>
+      <div class="text-secondary small mt-3">Nếu loài này chưa có trong Pokédex, trang sẽ tự thêm entry mới. Nếu đã có thì giữ nguyên.</div>`;
+    modal.show();
+  };
+  $('#n_add').onclick=()=>{
+    const raw=$('#n_sp').value.trim(); let id=/^\d+$/.test(raw)?+raw:
+      +(Object.entries(NAMES).find(([,n])=>n.toLowerCase()===raw.toLowerCase())||[0])[0];
+    if(!id){$('#n_sp').classList.add('is-invalid');return}
+    const lv=Math.min(100,Math.max(1,num($('#n_lv').value,1))), cnt=Math.min(500,Math.max(1,num($('#n_cnt').value,1)));
+    const sh=$('#n_sh').checked, base=fromLocalInput($('#n_dt').value)||Date.now();
+    const used=new Set(mz.m.map(z=>z[0])); const rnd=()=>Array.from({length:6},()=>'0123456789abcdefghijklmnopqrstuvwxyz'[Math.random()*36|0]).join('');
+    for(let n=0;n<cnt;n++){
+      let ms=base+n, uid; do{uid=msb36(ms++)+rnd()}while(used.has(uid)); used.add(uid);
+      const m=[uid,id,lv,0,num($('#n_reg').value),num($('#n_w').value),0]; if(sh)m.push({shiny:true});
+      mz.m.push(m);
+    }
+    const d=sv().dex||(sv().dex={}); let msgDex='Pokédex đã có';
+    if(!d[id]){d[id]=[cnt,base,null,sh?1:null,1];msgDex='đã thêm vào Pokédex'}
+    if(sh){(sv().seenShiny=sv().seenShiny||{})[id]=true}
+    toast(`Đã thêm ${cnt}× ${pname(id)} (${msgDex})`);
+    modal.hide(); monFilter=String(id); mons();
+  };
+  $('#m_q').onchange=e=>{monFilter=e.target.value;mons()};
+  $('#m_lv').onclick=()=>{if(confirm(`Đặt level 100 cho ${list.length} con?`)){list.forEach(m=>m[2]=100);vl.update(true)}};
+}
+
+/* ---------- Đội hình ---------- */
+function team(){
+  const s=sv(), byUid=new Map((s.mz?.m||[]).map(m=>[m[0],m]));
+  const label=k=>k==='team'?'Đội chính':k==='road'?'Đội đường (road)':k.startsWith('eventTeams.zone:')?'Event · Zone '+k.slice(16):k.startsWith('eventTeams.raid:')?'Raid · '+k.slice(16):k;
+  const groups={'team':s.team||[],'road':s.road||[]};
+  Object.entries(s.eventTeams||{}).forEach(([k,v])=>groups['eventTeams.'+k]=v);
+  const dl=`<datalist id="uidList">${(s.mz?.m||[]).map(m=>`<option value="${m[0]}">${esc(pname(m[1]))} Lv ${m[2]}</option>`).join('')}</datalist>`;
+  const slot=(k,u,i)=>{const m=byUid.get(u);return `<div class="tslot ${m?'':'empty'}">
+    <span class="tno">${i+1}</span>
+    <div class="tsp">${m?imgTag(m[1]):'<i class="bi bi-question-lg"></i>'}</div>
+    <div class="tname">${m?`<b>${esc(pname(m[1]))}</b><span class="text-secondary"> · Lv ${m[2]}</span>${m[7]?.shiny?' <i class="bi bi-stars text-warning"></i>':''}`:`<span class="text-secondary">${u?'Không có trong mz.m':'Trống'}</span>`}</div>
+    <input class="form-control form-control-sm" list="uidList" data-a="${esc(k)}" data-i="${i}" value="${esc(u??'')}" placeholder="uid" spellcheck="false"></div>`};
+  $('#main').innerHTML=dl+Object.entries(groups).map(([k,v])=>`<div class="card mb-3"><div class="card-header d-flex justify-content-between"><span>${esc(label(k))}</span><span class="text-secondary">${v.filter(Boolean).length}/${v.length}</span></div>
+    <div class="card-body"><div class="tgrid">${v.map((u,i)=>slot(k,u,i)).join('')}</div></div></div>`).join('');
+  $('#main').querySelectorAll('input[data-a]').forEach(i=>i.onchange=()=>{
+    const k=i.dataset.a, arr=k==='team'?s.team:k==='road'?s.road:s.eventTeams[k.slice(11)];
+    arr[+i.dataset.i]=i.value.trim(); team();
+  });
+}
+/* ---------- Pokédex ---------- */
+// dex[id] = [số lần bắt, thời điểm thêm vào dex (ms), c2, c3, c4]
+let dexQ='';
+function dex(){
+  const d=sv().dex||(sv().dex={});
+  const q=dexQ.toLowerCase();
+  const ids=Object.keys(d).map(Number).sort((a,b)=>a-b).filter(id=>!q||String(id)===q||pname(id).toLowerCase().includes(q));
+  const cols=[48,200,90,200,80,80,80,44];
+  const heads=['','Pokémon','Đã bắt','Ngày thêm vào dex','c2','c3','c4',''];
+  $('#main').innerHTML=`<div class="card"><div class="card-body">
+    <div class="d-flex gap-2 flex-wrap sticky-bar">
+      <input id="d_q" class="form-control form-control-sm" style="width:220px" placeholder="Lọc theo tên hoặc id" value="${esc(dexQ)}">
+      <input id="d_new" type="number" class="form-control form-control-sm" style="width:130px" placeholder="species id">
+      <button id="d_add" class="btn btn-sm btn-outline-warning">Thêm entry</button>
+      <button id="d_fill" class="btn btn-sm btn-outline-light">Thêm id 1–251 còn thiếu</button>
+      <span class="text-secondary align-self-center"><span id="d_cnt">${ids.length}</span> entry</span>
+    </div>
+    <div class="text-secondary small mb-2">Entry: [số lần bắt, thời điểm thêm vào dex, c2, c3, c4]. Ô trống = null.</div>
+    ${vlShell(cols,heads,56,238,4)}
+  </div></div>`;
+  const inp=(c,v)=>`<input type="number" class="form-control form-control-sm" data-c="${c}" value="${v??''}">`;
+  const rowHtml=id=>{const e=d[id];return [
+    cell('c-img','',imgTag(id)),
+    cell('s-all','',`<div><b>${esc(pname(id))}</b> <span class="text-secondary">#${id}</span></div>`),
+    cell('','Đã bắt',inp(0,e[0])),
+    cell('s-all','Ngày thêm vào dex',dtInput(e[1],'data-t="1"')),
+    cell('','c2',inp(2,e[2])), cell('','c3',inp(3,e[3])), cell('','c4',inp(4,e[4])),
+    cell('s-all','',`<button class="btn btn-sm btn-outline-danger" data-del><i class="bi bi-trash"></i><span class="d-md-none"> Xóa</span></button>`)
+  ].join('')};
+  const vl=makeVL({wrap:$('.vl-wrap'),items:ids,dH:56,mH:250,row:rowHtml,
+    onChange:(ev,id)=>{
+      const i=ev.target,e=d[id];
+      if(i.dataset.t) e[1]=fromLocalInput(i.value);
+      else if(i.dataset.c) e[+i.dataset.c]=i.value===''?null:num(i.value)},
+    onClick:(ev,id)=>{
+      if(!ev.target.closest('[data-del]')) return;
+      delete d[id]; ids.splice(ids.indexOf(id),1); $('#d_cnt').textContent=ids.length; vl.update(true)}
+  });
+  $('#d_q').onchange=e=>{dexQ=e.target.value.trim();dex()};
+  $('#d_add').onclick=()=>{const id=num($('#d_new').value,0);if(id>0&&!d[id]){d[id]=[1,Date.now(),null,null,1];dex()}};
+  $('#d_fill').onclick=()=>{for(let i=1;i<=251;i++)if(!d[i])d[i]=[1,Date.now(),null,null,1];dex()};
+}
+
+/* ---------- Pension ---------- */
+function pension(){
+  const p=sv().pension; if(!p){$('#main').innerHTML='<div class="alert alert-warning">Không có pension</div>';return}
+  const eggs=p.eggs||[], pm=p.mons||[];
+  $('#main').innerHTML=`<div class="card mb-3"><div class="card-header d-flex justify-content-between">Trứng
+    <button id="p_hatch" class="btn btn-sm btn-outline-warning">Cho nở ngay</button></div>
+    <table class="table table-sm mb-0 align-middle rtable"><thead><tr><th></th><th>uid</th><th>Species</th><th>Ngày đẻ</th><th>Ngày nở</th></tr></thead><tbody>
+    ${eggs.map((e,i)=>`<tr><td>${imgTag(e.id)}</td><td>${e.uid}</td>
+      <td><input type="number" class="form-control form-control-sm w-n" data-e="${i}" data-f="id" value="${e.id}"> <small>${esc(pname(e.id))}</small></td>
+      <td>${dtInput(e.laidAt,`data-e="${i}" data-f="laidAt"`)}</td><td>${dtInput(e.hatchAt,`data-e="${i}" data-f="hatchAt"`)}</td></tr>`).join('')||'<tr><td colspan="5">Không có</td></tr>'}</tbody></table></div>
+    <div class="card"><div class="card-header">Pokémon đang gửi</div>
+    <div class="scroll"><table class="table table-sm mb-0 align-middle rtable"><thead><tr><th></th><th>Pokémon</th><th>Species</th><th>Level</th><th>XP</th><th>Candy</th><th>Ngày bắt</th><th>Nơi bắt</th><th>Shiny</th></tr></thead><tbody>
+    ${pm.map((o,i)=>`<tr><td>${imgTag(o.mon.id)}</td><td><b>${esc(pname(o.mon.id))}</b><br><small class="text-secondary">${o.mon.uid}</small></td>
+      <td><input type="number" class="form-control form-control-sm w-n" data-m="${i}" data-f="id" value="${o.mon.id}"></td>
+      <td><input type="number" class="form-control form-control-sm w-n" data-m="${i}" data-f="level" value="${o.mon.level}"></td>
+      <td><input type="number" class="form-control form-control-sm w-n" data-m="${i}" data-f="xp" value="${o.mon.xp}"></td>
+      <td><input type="number" class="form-control form-control-sm w-n" data-m="${i}" data-f="candy" value="${o.candy}"></td>
+      <td>${dtInput(o.mon.caughtAt,`data-m="${i}" data-f="caughtAt"`)}</td>
+      <td><input class="form-control form-control-sm" style="width:180px" data-m="${i}" data-f="where" value="${esc(o.mon.where??'')}"></td>
+      <td><input type="checkbox" class="form-check-input" data-m="${i}" data-f="shiny" ${o.mon.shiny?'checked':''}></td></tr>`).join('')||'<tr><td colspan="9">Không có</td></tr>'}</tbody></table></div></div>`;
+  $('#p_hatch').onclick=()=>{eggs.forEach(e=>e.hatchAt=Date.now());pension()};
+  const val=i=>i.type==='checkbox'?i.checked:i.type==='datetime-local'?fromLocalInput(i.value):i.type==='number'?num(i.value):i.value;
+  $('#main').querySelectorAll('[data-e]').forEach(i=>i.onchange=()=>{eggs[+i.dataset.e][i.dataset.f]=val(i)});
+  $('#main').querySelectorAll('[data-m]').forEach(i=>i.onchange=()=>{
+    const o=pm[+i.dataset.m], f=i.dataset.f; if(f==='candy')o.candy=val(i); else o.mon[f]=val(i)});
+}
+
+/* ---------- JSON thô ---------- */
+function raw(){
+  $('#main').innerHTML=`<div class="card"><div class="card-body">
+    <div class="input-group input-group-sm mb-2" style="max-width:640px"><span class="input-group-text">Đường dẫn</span>
+    <input id="r_path" class="form-control" value="save">
+    <button id="r_load" class="btn btn-outline-light">Tải</button><button id="r_apply" class="btn btn-warning">Áp dụng</button></div>
+    <div class="text-secondary small mb-2">vd: save, save.stats, save.buffs, save.trainer</div>
+    <textarea id="r_ta" class="form-control raw" spellcheck="false"></textarea></div></div>`;
+  const get=p=>p.split('.').filter(Boolean).reduce((o,k)=>o?.[k],data);
+  const load=()=>{$('#r_ta').value=JSON.stringify(get($('#r_path').value),null,1)};
+  load();
+  $('#r_load').onclick=load;
+  $('#r_apply').onclick=()=>{
+    try{
+      const v=JSON.parse($('#r_ta').value);
+      const parts=$('#r_path').value.split('.').filter(Boolean);
+      if(!parts.length){data=v}else{
+        const last=parts.pop(); const par=parts.reduce((o,k)=>o?.[k],data);
+        if(!par) throw new Error('Đường dẫn không tồn tại'); par[last]=v}
+      toast('Đã áp dụng');
+    }catch(e){alert('Lỗi: '+e.message)}
+  };
+}
+/* gắn nhãn data-label cho td theo header để bảng thành thẻ trên mobile */
+function labelize(){
+  document.querySelectorAll('#main table.rtable').forEach(tb=>{
+    const ths=[...tb.querySelectorAll('thead th')].map(h=>h.textContent.trim());
+    if(!ths.length) return;
+    tb.querySelectorAll('tbody tr').forEach(tr=>{
+      const tds=tr.children; if(tds.length!==ths.length) return;
+      for(let i=0;i<tds.length;i++) tds[i].setAttribute('data-label',ths[i]);
+    });
+  });
+}
+new MutationObserver(labelize).observe($('#main'),{childList:true,subtree:true});
+/* sự kiện ủy quyền cho tab Chung (gắn một lần) */
+{
+  const main=$('#main');
+  // nạp nội dung khi mở node (lazy)
+  main.addEventListener('toggle',e=>{
+    if(tab!=='general') return; const d=e.target; if(!d.classList?.contains('gnode')||!d.open) return;
+    const b=d.querySelector(':scope>.gbody'); if(b&&!b.dataset.done){b.dataset.done=1;b.innerHTML=bodyHtml(JSON.parse(d.dataset.p))}
+  },true);
+  // sửa giá trị
+  const onEdit=e=>{
+    const i=e.target; if(!i.dataset||!i.dataset.p||!i.dataset.t) return;
+    const p=JSON.parse(i.dataset.p); let v;
+    switch(i.dataset.t){
+      case 'bool': v=i.checked;break;
+      case 'num': v=i.value===''?0:Number(i.value);break;
+      case 'ts': v=fromLocalInput(i.value);if(v==null)return;break;
+      case 'arr': v=i.value.split(',').map(x=>x.trim()).filter(x=>x!=='').map(x=>/^-?\d+(\.\d+)?$/.test(x)?Number(x):x==='true'?true:x==='false'?false:x==='null'?null:x);break;
+      default: {const x=i.value; v=x===''&&i.dataset.t==='null'?null:/^-?\d+(\.\d+)?$/.test(x)&&i.dataset.t==='null'?Number(x):x}
+    }
+    setP(p,v);
+  };
+  main.addEventListener('change',e=>{if(tab==='general')onEdit(e)});
+}
+new ResizeObserver(()=>document.documentElement.style.setProperty('--nav-h',document.querySelector('.navbar').offsetHeight+'px')).observe(document.querySelector('.navbar'));
+renderTabs(); loadNames();
+</script>
+</body>
+</html>
