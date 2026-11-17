@@ -119,6 +119,45 @@ img.sp.ld{animation:none;background:none}
 .vrow .cell{display:flex;flex-direction:column;justify-content:center;min-width:0}
 .vrow .lbl{display:none}
 .vrow .form-control,.vrow .form-select{width:100%}
+.vrow .nm{overflow:hidden;text-overflow:ellipsis}
+.vrow .uid{overflow:hidden;text-overflow:ellipsis}
+.vrow .grp{gap:4px}
+.vrow .grp.g2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.vrow .mf{display:flex;align-items:center;gap:4px;margin:0;min-width:0}
+.vrow .mf>span{flex:0 0 var(--mw,24px);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--lin-mut)}
+.vrow .mf>.form-control,.vrow .mf>.form-select{flex:1 1 0;min-width:0;padding-top:.15rem;padding-bottom:.15rem}
+.vrow input[type=number]::-webkit-inner-spin-button{display:none}
+.vrow input[type=number]{-moz-appearance:textfield}
+.vrow .lbl:empty{display:none}
+.vrow .c-shiny{align-items:center}
+.vrow .c-shiny .lbl{display:none}
+.shiny-t{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1px solid var(--lin-bd2);color:var(--lin-bd2);cursor:pointer;margin:0}
+.shiny-t input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.shiny-t:hover{border-color:var(--lin-mut)}
+.shiny-t:has(input:checked){color:#f5c542;border-color:rgba(245,197,66,.55);background:rgba(245,197,66,.12)}
+.vrow .c-del{align-items:center}
+.vrow.is-shiny{box-shadow:inset 3px 0 0 rgba(245,197,66,.7)}
+@media (max-width:768px){
+  .vrow .c-shiny{flex-direction:row;justify-content:flex-start}
+  .vrow .mf>span{flex-basis:var(--mw,28px)}
+  .vrow.mon{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 8px;padding:12px;box-shadow:none;align-content:start}
+  .vrow.mon.is-shiny{border-color:rgba(245,197,66,.45);box-shadow:inset 3px 0 0 rgba(245,197,66,.7)}
+  .vrow.mon .c-img{position:static;grid-row:1;grid-column:1;align-items:center;justify-content:center}
+  .vrow.mon .c-img img.sp{width:48px;height:48px}
+  .vrow.mon .c-name{grid-row:1;grid-column:2/5;padding-right:0;min-height:0;align-self:center}
+  .vrow.mon .c-name .nm{font-size:15px;line-height:1.3}
+  .vrow.mon .c-shiny{grid-row:1;grid-column:5;align-items:center;justify-content:center}
+  .vrow.mon .c-del{grid-row:1;grid-column:6;align-items:center;justify-content:center}
+  .vrow.mon .c-del .btn{width:36px;min-height:36px;padding:0}
+  .vrow.mon .c-del .btn span{display:none}
+  .vrow.mon .c-sp{grid-column:span 2}
+  .vrow.mon .c-lv{grid-column:span 4;grid-template-columns:1fr 1fr;align-items:end}
+  .vrow.mon .c-sp .lbl,.vrow.mon .mf.v{margin:0}
+  .vrow.mon .c-loc,.vrow.mon .c-when,.vrow.mon .c-st{grid-column:1/-1;padding:8px 10px;border:1px solid var(--lin-bd);border-radius:8px;background:rgba(255,255,255,.02)}
+  .vrow.mon .c-lv .mf,.vrow.mon .c-st .mf{flex-direction:column;align-items:stretch;gap:2px}
+  .vrow.mon .c-lv .mf>span,.vrow.mon .c-st .mf>span{flex:none;font-size:10.5px}
+  .vrow.mon .c-st{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+}
 .vrow .uid{font-size:11px}
 .vrow img.sp{width:40px;height:40px}
 @media (max-width:768px){
@@ -446,7 +485,7 @@ function makeVL(o){
     if(!force&&s===cs&&e===ce) return;
     cs=s;ce=e;
     let out='';
-    for(let i=s;i<e;i++) out+=`<div class="vrow" data-i="${i}" style="top:${i*h}px">${o.row(o.items[i],i)}</div>`;
+    for(let i=s;i<e;i++) out+=`<div class="vrow${o.cls?' '+o.cls(o.items[i]):''}" data-i="${i}" style="top:${i*h}px">${o.row(o.items[i],i)}</div>`;
     body.innerHTML=out;
   }
   const onScroll=()=>update(false), onResize=()=>update(true);
@@ -464,7 +503,7 @@ function makeVL(o){
 const cell=(cls,label,inner)=>`<div class="cell ${cls}"><span class="lbl">${label}</span>${inner}</div>`;
 const vlShell=(cols,heads,dH,ch,mc)=>{
   const w=cols.reduce((a,b)=>a+b,0)+8*(cols.length-1)+16;
-  return `<div class="vl-wrap" style="--cols:${cols.map(c=>c+'px').join(' ')};--dh:${dH}px;--ch:${ch}px;--mc:${mc}">
+  return `<div class="vl-wrap" style="width:${w+2}px;max-width:100%;margin-inline:auto;--cols:${cols.map(c=>c+'px').join(' ')};--dh:${dH}px;--ch:${ch}px;--mc:${mc}">
     <div class="vl-head" style="width:${w}px">${heads.map(h=>`<div>${h}</div>`).join('')}</div>
     <div class="vl-body" style="width:${w}px"></div></div>`;
 };
@@ -482,9 +521,9 @@ function mons(){
   const list=mz.m.filter(m=>!q||String(m[1])===q||m[0].includes(q)||pname(m[1]).toLowerCase().includes(q)||
     (q==='team'&&teamHas(m[0]))||(q==='shiny'&&m[7]?.shiny)||(q==='egg'&&m[7]?.egg));
   const opt=(arr,v)=>arr.map((n,i)=>`<option value="${i}" ${i===v?'selected':''}>${esc(n)}</option>`).join('');
-  const cols=[48,190,200,90,80,100,100,200,60,90,80,80,90,80,44];
-  const heads=['','Pokémon','Ngày bắt','Species','Level','XP','Vùng','Nơi bắt','Shiny','Cách có','Tries','HP','Wins','c6',''];
-  $('#main').innerHTML=`<div class="card"><div class="card-body">
+  const cols=[52,175,76,150,220,215,170,56,44];
+  const heads=['','Pokémon','Species','Level / XP','Vùng / Nơi bắt','Ngày bắt / Cách có','HP · Win · Try · c6','Shiny',''];
+  $('#main').innerHTML=`<div class="card"><div class="card-body"><div class="vl-center" style="max-width:${cols.reduce((a,b)=>a+b,0)+8*(cols.length-1)+18}px;margin-inline:auto">
     <div class="d-flex gap-2 align-items-center flex-wrap sticky-bar">
       <input id="m_q" class="form-control form-control-sm" style="width:300px" placeholder="Lọc: tên, species id, uid, team, shiny, egg" value="${esc(monFilter)}">
       <span class="text-secondary"><span id="m_cnt">${list.length}</span>/<span id="m_tot">${mz.m.length}</span> con</span>
@@ -492,31 +531,28 @@ function mons(){
       <button id="m_lv" class="btn btn-sm btn-outline-warning">Lv 100 cho các con đang lọc</button>
     </div>
     <div class="text-secondary small mb-2">Đổi "Ngày bắt" sẽ đổi uid của con đó (và mọi chỗ tham chiếu uid trong save). Cột c6 chưa rõ ý nghĩa.</div>
-    ${vlShell(cols,heads,60,420,3)}
-  </div></div>`;
-  const num_=(c,v,w)=>`<input type="number" class="form-control form-control-sm" data-c="${c}" value="${v}">`;
+    ${vlShell(cols,heads,76,440,6)}
+  </div></div></div>`;
+  const mf=(lbl,inner,w)=>`<label class="mf"${w?` style="--mw:${w}px"`:''}><span>${lbl}</span>${inner}</label>`;
+  const num_=(c,v)=>`<input type="number" class="form-control form-control-sm" data-c="${c}" value="${v}">`;
   const xin=(k,v)=>`<input type="number" class="form-control form-control-sm" data-x="${k}" value="${v??''}">`;
   const rowHtml=m=>{const x=m[7]||{};return [
     cell('c-img','',imgTag(m[1])),
-    cell('c-name s-all','',`<div><b>${esc(pname(m[1]))}</b> ${teamHas(m[0])?'<span class="badge text-bg-warning">TEAM</span>':''}${x.egg?' <span class="badge text-bg-info">EGG</span>':''}${x.shiny?' <i class="bi bi-stars text-warning"></i>':''}</div><small class="text-secondary uid">${m[0]}</small>`),
-    cell('s-all','Ngày bắt',dtInput(b36ms(m[0]),'data-t="caught"')),
-    cell('','Species',num_(1,m[1])),
-    cell('','Level',num_(2,m[2])),
-    cell('','XP',num_(3,m[3])),
-    cell('','Vùng',`<select class="form-select form-select-sm" data-c="4">${opt(mz.r,m[4])}</select>`),
-    cell('s2','Nơi bắt',`<select class="form-select form-select-sm" data-c="5">${opt(mz.w,m[5])}</select>`),
-    cell('','Shiny',`<input type="checkbox" class="form-check-input" data-b="shiny" ${x.shiny?'checked':''}>`),
-    cell('','Cách có',`<input class="form-control form-control-sm" data-s="how" value="${esc(x.how??'')}" placeholder="gift/npc">`),
-    cell('','Tries',xin('tries',x.tries)),
-    cell('','HP',xin('hp',x.hp)),
-    cell('','Wins',xin('wins',x.wins)),
-    cell('','c6',num_(6,m[6]??0)),
-    cell('s-all','',`<button class="btn btn-sm btn-outline-danger" data-del><i class="bi bi-trash"></i><span class="d-md-none"> Xóa</span></button>`)
+    cell('c-name','',`<div class="nm"><b>${esc(pname(m[1]))}</b> ${teamHas(m[0])?'<span class="badge text-bg-warning">TEAM</span>':''}${x.egg?' <span class="badge text-bg-info">EGG</span>':''}</div><small class="text-secondary uid">${m[0]}</small>`),
+    cell('c-sp','Species',num_(1,m[1])),
+    cell('c-lv grp g2','',mf('Lv',num_(2,m[2]))+mf('XP',num_(3,m[3]))),
+    cell('c-loc grp','',mf('Vùng',`<select class="form-select form-select-sm" data-c="4">${opt(mz.r,m[4])}</select>`,40)+
+      mf('Nơi',`<select class="form-select form-select-sm" data-c="5">${opt(mz.w,m[5])}</select>`,40)),
+    cell('c-when grp','',mf('Ngày',dtInput(b36ms(m[0]),'data-t="caught"'),40)+
+      mf('Cách',`<input class="form-control form-control-sm" data-s="how" value="${esc(x.how??'')}" placeholder="gift/npc">`,40)),
+    cell('c-st grp g2','',mf('HP',xin('hp',x.hp))+mf('Win',xin('wins',x.wins))+mf('Try',xin('tries',x.tries))+mf('c6',num_(6,m[6]??0))),
+    cell('c-shiny','Shiny',`<label class="shiny-t" title="Shiny"><input type="checkbox" data-b="shiny" ${x.shiny?'checked':''}><i class="bi bi-star-fill"></i></label>`),
+    cell('c-del','',`<button class="btn btn-sm btn-outline-danger" data-del title="Xóa"><i class="bi bi-trash"></i><span class="d-md-none"> Xóa</span></button>`)
   ].join('')};
   const setX=(m,k,v)=>{
     if(v===''||v===false||v==null){if(m[7]){delete m[7][k];if(!Object.keys(m[7]).length)m.length=7}}
     else{m[7]=m[7]||{};m[7][k]=v}};
-  const vl=makeVL({wrap:$('.vl-wrap'),items:list,dH:60,mH:432,row:rowHtml,
+  const vl=makeVL({wrap:$('.vl-wrap'),items:list,dH:76,mH:452,cls:m=>'mon'+(m[7]?.shiny?' is-shiny':''),row:rowHtml,
     onChange:(e,m)=>{
       const i=e.target;
       if(i.dataset.c){m[+i.dataset.c]=num(i.value); if(i.dataset.c==='1')vl.update(true)}
@@ -550,6 +586,7 @@ function mons(){
         <div class="col-12 col-sm-8"><label class="form-label">Nơi bắt</label><select id="n_w" class="form-select">${mz.w.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('')}</select></div>
         <div class="col-12 col-sm-8"><label class="form-label">Ngày bắt</label><input id="n_dt" type="datetime-local" step="1" class="form-control" value="${toLocalInput(Date.now())}"></div>
         <div class="col-12 col-sm-4 d-flex align-items-end"><div class="form-check form-switch mb-2"><input id="n_sh" type="checkbox" class="form-check-input" role="switch"><label class="form-check-label" for="n_sh">Shiny</label></div></div>
+      <div class="col-12"><div class="form-check form-switch"><input id="n_auto" type="checkbox" class="form-check-input" role="switch" checked><label class="form-check-label" for="n_auto">Tự tính chỉ số theo dữ liệu save (XP=0, how=gift, HP đầy, dex c2/c3 đúng loại shiny/thường)</label></div></div>
       </div>
       <div class="text-secondary small mt-3">Nếu loài này chưa có trong Pokédex, trang sẽ tự thêm entry mới. Nếu đã có thì giữ nguyên.</div>`;
     modal.show();
@@ -559,15 +596,17 @@ function mons(){
       +(Object.entries(NAMES).find(([,n])=>n.toLowerCase()===raw.toLowerCase())||[0])[0];
     if(!id){$('#n_sp').classList.add('is-invalid');return}
     const lv=Math.min(100,Math.max(1,num($('#n_lv').value,1))), cnt=Math.min(500,Math.max(1,num($('#n_cnt').value,1)));
-    const sh=$('#n_sh').checked, base=fromLocalInput($('#n_dt').value)||Date.now();
+    const auto=$('#n_auto').checked, sh=$('#n_sh').checked, base=fromLocalInput($('#n_dt').value)||Date.now();
     const used=new Set(mz.m.map(z=>z[0])); const rnd=()=>Array.from({length:6},()=>'0123456789abcdefghijklmnopqrstuvwxyz'[Math.random()*36|0]).join('');
     for(let n=0;n<cnt;n++){
       let ms=base+n, uid; do{uid=msb36(ms++)+rnd()}while(used.has(uid)); used.add(uid);
-      const m=[uid,id,lv,0,num($('#n_reg').value),num($('#n_w').value),0]; if(sh)m.push({shiny:true});
+      const m=[uid,id,lv,0,num($('#n_reg').value),num($('#n_w').value),0];
+      if(auto){const x={}; if(sh)x.shiny=true; x.how='gift'; m.push(x)} else if(sh)m.push({shiny:true});
       mz.m.push(m);
     }
     const d=sv().dex||(sv().dex={}); let msgDex='Pokédex đã có';
-    if(!d[id]){d[id]=[cnt,base,null,sh?1:null,1];msgDex='đã thêm vào Pokédex'}
+    if(!d[id]){d[id]=auto?[1,base,sh?null:1,sh?1:null,1]:[cnt,base,null,sh?1:null,1];msgDex='đã thêm vào Pokédex'}
+    else if(auto){const e=d[id]; if(sh&&e[3]==null)e[3]=1; if(!sh&&e[2]==null&&e[3]==null)e[2]=1}
     if(sh){(sv().seenShiny=sv().seenShiny||{})[id]=true}
     toast(`Đã thêm ${cnt}× ${pname(id)} (${msgDex})`);
     modal.hide(); monFilter=String(id); mons();
